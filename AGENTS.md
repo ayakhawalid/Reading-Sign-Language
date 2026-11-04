@@ -17,7 +17,9 @@ Ask the user which phase they want to work on if `planning/TODO.md` does not mak
 - Submission-facing (what the instructor sees): `README.md`, `notebooks/`, `src/`, `reports/`, `requirements.txt`, `.gitignore`, `tools/`.
 - Internal (for the student and for agents): `planning/` and this file.
 
-Submission-facing files must look like an ordinary student project. They must not reference `planning/`, this file, or the fact that an AI was involved beyond what the student writes in the AI-use note. Never leave `TODO`, `FIXME`, `XXX`, "write here", "fill in", or similar markers in submission-facing files. Never add placeholder IDs or marker macros to the reports.
+"The student" in this file means both team members, Mohamed Shawki and Aia Khawaled.
+
+`planning/` and this file stay in the repository and are visible to the mentors (decision D-15). AI use is disclosed honestly in the AI-use note at the end of each report, including the help AI gave with planning. Submission-facing files must still be clean: never leave `TODO`, `FIXME`, `XXX`, "write here", "fill in", or similar markers in them, and never add placeholder IDs or marker macros to the reports.
 
 ## 3. No ghostwriting
 
@@ -28,7 +30,7 @@ The course requires that analysis, interpretation and written answers be the stu
 - Do not paraphrase numbers into prose anywhere in `reports/`. Results enter the reports only via `\input{tables/...}` and `\includegraphics{figures/...}` wired to files produced by the notebooks.
 - May explain results to the student in chat, and may explain concepts in `planning/TEXTBOOK.md`, as much as helpful. Chat is not the report.
 
-If the student asks you to write report prose for them, remind them of this rule once, then follow their instruction if they insist. Record that in `planning/TEXTBOOK.md` Part C.
+This rule has no exceptions (decision D-14). If the student asks you to write report prose, decline, point to this section and the course PDF, and offer to explain the concept or result in chat so they can write it themselves.
 
 ## 4. Predict-before-you-run gate
 
@@ -45,6 +47,7 @@ Every work question in every stage requires the student to write a prediction be
 - Stage 3: exactly the fixed CNN: Conv(1->16, 3x3) -> ReLU -> MaxPool 2x2 -> Conv(16->32, 3x3) -> ReLU -> MaxPool 2x2 -> Flatten -> Linear(->24). Plain PyTorch (decision D-3). No extra layers, no dropout, no batch norm, no data augmentation during training. Early stopping and checkpointing are allowed.
 - Shift and noise perturbations are evaluation-only. Never train on shifted or noisy images.
 - No other models, ensembles, or pretrained weights anywhere.
+- Phase 5 (live camera demo, decision D-13) is an extension after Stage 3. It uses only the trained Stage 3 CNN and its results never enter the stage tables or figures. Any extra component (for example a hand detector for cropping) needs the mentors' approval first, recorded in `planning/PRD.md`.
 
 ## 6. Reproducibility rules
 
@@ -76,6 +79,10 @@ pip install -r requirements.txt
 ```
 
 If PyTorch has no wheel for the installed Python version, install the newest Python that it supports side by side and create the venv with that interpreter; record this in `planning/TODO.md` and Part C.
+
+Verified on 2026-11-04: Python 3.14.10 with `torch` 2.15.0+cpu installs and imports. In Command Prompt (cmd) activate the venv with `.venv\Scripts\activate`.
+
+`setup.bat` does the whole setup on a new computer (Python 3.14, `.venv`, `requirements.txt`, import check, data check); the team uses three computers. Whenever you add a package, pin it in `requirements.txt` and tell the student to rerun `setup.bat` on every computer.
 
 Run a notebook headlessly:
 

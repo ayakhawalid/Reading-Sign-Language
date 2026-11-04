@@ -12,7 +12,11 @@ The classifier is the same in every stage, so differences in accuracy, training 
 
 Sign Language MNIST from Kaggle: <https://www.kaggle.com/datasets/datamunge/sign-language-mnist>. Download and unzip, then place `sign_mnist_train.csv` and `sign_mnist_test.csv` in `data/raw/`. The data files are not committed.
 
-## Setup (Windows, PowerShell)
+## Setup (Windows)
+
+Double-click `setup.bat` (or run it from a terminal). It installs Python 3.14 with winget if it is missing, creates `.venv`, installs the pinned packages from `requirements.txt`, checks that they import, and checks that the data files are in `data/raw/`. It is safe to run again after `requirements.txt` changes.
+
+Manual setup in PowerShell:
 
 ```powershell
 py -3.14 -m venv .venv

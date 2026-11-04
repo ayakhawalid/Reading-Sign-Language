@@ -441,7 +441,7 @@ Optional photos. After the run: Training, Comparison, Learned feature space, Rob
 1. `reports/final/report.tex` `\input`s `../stage1/body.tex`, `../stage2/body.tex`, `../stage3/body.tex` (each stage report is split into `report.tex` = wrapper with preamble and `body.tex` = sections, so the same body compiles alone and inside the final report), then the narrative section and the final AI-use note, which you write.
 2. `planning/DEFENSE_PREP.md`: around 30 questions an examiner could ask, each with a pointer to the Part A section and the report section where the answer lives. No answers.
 3. Clean-venv reproducibility: `py -3.14 -m venv .venv_check`, install, `jupyter nbconvert --execute` on all four notebooks in order, `latexmk -pdf` on all four reports. Compare the regenerated tables with the committed ones; small floating-point differences in times are expected, accuracies should match exactly for Stages 1-2 and to within 0.5 pp for Stage 3 (CPU determinism caveats).
-4. Grep submission-facing files for `planning`, `AGENTS`, `TODO`, `FIXME`, `fill`, `write here`. Must be empty.
+4. Grep submission-facing files for `planning`, `AGENTS`, `TODO`, `FIXME`, `fill`, `write here`. Must be empty. See deviation C-1.
 
 ---
 
@@ -468,7 +468,16 @@ Future agents: read this part before Part B. Entries here override Part B.
 
 ## Entries
 
-(none yet)
+### C-1: Planning files stay visible; marker sweep no longer looks for `planning` or `AGENTS`
+- Date: 2026-11-04
+- Phase: 4 (decided before Phase 0)
+- Part B section affected: B.4, step 4
+- Planned: grep submission-facing files for `planning`, `AGENTS`, `TODO`, `FIXME`, `fill`, `write here`; all must be absent.
+- Done instead: grep only for leftover markers (`TODO`, `FIXME`, `fill in`, `write here`). Mentioning `planning/` or `AGENTS.md` is allowed, and both stay committed.
+- Why: decision D-15. The course PDF asks for honest AI-use disclosure, so nothing about AI use is hidden.
+- Effect on results: none.
+- Decided by: student (both team members)
+- Follow-up: the `.gitignore` lines for hiding `planning/` and `AGENTS.md` were removed; the related TODO item was replaced.
 
 ---
 

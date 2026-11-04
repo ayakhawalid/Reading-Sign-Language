@@ -12,12 +12,14 @@ Deliver the three-stage course project described in `Project_Sign_Language.pdf`:
 
 Plus a combined final report and a 20-minute oral defense.
 
+Extension after Stage 3 (Phase 5, D-13): a live camera demo that reads a static letter from a webcam with the trained Stage 3 CNN. Suggested by the mentor (Sharon) for the presentation; it is not one of the graded stages.
+
 The project is about features: the classifier (softmax / multinomial logistic regression) is identical in all three stages, so every difference in results is attributable to the features.
 
 ## 2. Non-goals
 
 - No models beyond those the PDF allows for each stage.
-- No real-time webcam application (the original README idea). Out of scope for the course deliverable; could be a later personal extension.
+- No real-time webcam work before Stage 3 is finished. The live demo is Phase 5 and must not change any Stage 1-3 result.
 - No hyperparameter search beyond what the PDF asks (`C` in Stage 1, `k` in Stage 2, epochs via early stopping in Stage 3).
 - No data augmentation during training. Shifts and noise are evaluation-time perturbations only.
 - No automated writing of report prose. The student writes every answer, prediction, interpretation and note.
@@ -48,11 +50,14 @@ The project is about features: the classifier (softmax / multinomial logistic re
 | D-5 | Pixel scaling is `x / 255.0` only. No per-pixel standardisation. | Proposed | Keeps Stage 1 weight images interpretable in pixel space and matches the PDF's loading snippet. |
 | D-6 | Shift test: integer pixel shifts of 1, 2, 3 in each of the four directions, implemented as pad-with-edge-replication then crop back to 28x28. Report accuracy per direction and averaged over directions. | Proposed | Edge replication avoids introducing a black bar that would itself be a new feature; averaging over directions reduces direction-specific noise while per-direction numbers are kept for honesty. |
 | D-7 | Noise test: additive Gaussian noise with sigma in {0.1, 0.2, 0.3} on [0,1]-scaled test images, clipped back to [0,1], fixed seed. | Proposed | Three levels show the trend rather than a single point; clipping keeps images valid. |
-| D-8 | No visible scaffolding in submission-facing files: no placeholder macros, IDs, or "write here" markers. Tasks for the student live only in `planning/TODO.md`. | Confirmed by student | The submitted project must read as ordinary student work. |
+| D-8 | No visible scaffolding in submission-facing files: no placeholder macros, IDs, or "write here" markers. Tasks for the student live only in `planning/TODO.md`. | Confirmed by student | Clean deliverables. This is about leftover markers, not about hiding AI use (see D-15). |
 | D-9 | Stage 1 `C` grid: {0.001, 0.01, 0.1, 1, 10, 100}; solver `lbfgs`, `max_iter` 2000 or until converged. | Proposed | Six values over five decades satisfy "several values of C"; lbfgs is the scikit-learn default for multinomial. |
 | D-10 | Stage 2 `k` grid: {10, 20, 50, 100, 150, 200, 300, 500}, trained with the Stage 1 `C`. Chosen `k` is proposed by the rule "smallest `k` whose validation accuracy is within 0.5 percentage points of the best"; the student makes and justifies the final choice. | Proposed | Includes the PDF's required 10, 50, 150 and spans up to most of the variance. Rule gives a defensible default without hiding the trade-off. |
 | D-11 | Stage 3 training: Adam, lr 1e-3, batch 128, max 30 epochs, early stopping on validation loss with patience 5, restore best epoch. Padding 1 in both conv layers so feature maps are 28->14->7 and the flatten size is 32*7*7 = 1568. | Proposed | Standard, small, CPU-friendly. Padding choice keeps arithmetic clean; without padding the flatten size would be 32*5*5 = 800, which is also valid, but one must be fixed. |
 | D-12 | Feature-space separability is reported visually (2D PCA scatter) and numerically (silhouette score on the 2D projection and on the full features) for raw pixels and CNN features. | Proposed | "Better separated" should not rest on eyeballing one scatter plot. |
+| D-13 | Live camera demo as Phase 5, after Stage 3: webcam frame -> fixed on-screen square where the hand goes -> grayscale -> 28x28 -> x/255 -> Stage 3 CNN -> letter and confidence, smoothed over recent frames. Uses only the trained Stage 3 CNN. | Confirmed by student (2026-11-04) | Suggested by Sharon for the presentation. Kept separate so the graded stages follow the PDF exactly. Open questions for the mentors in Phase 5. |
+| D-14 | Agents never write report prose, with no exception, even if asked. | Confirmed by student (2026-11-04) | The PDF requires analysis, interpretation and written answers to be our own. |
+| D-15 | `planning/` and `AGENTS.md` stay committed and visible. Each AI-use note states honestly what AI did, including the planning help. | Confirmed by student (2026-11-04) | The PDF asks for honest AI-use disclosure; nothing about AI use is hidden. |
 
 Status values: Proposed (agent default, student may change before the phase runs), Confirmed by student, Superseded (see `planning/TEXTBOOK.md` Part C).
 
@@ -87,6 +92,8 @@ Reading-Sign-Language/
     cnn.py                      the fixed CNN, train loop, early stopping, feature extraction
   tools/
     build_tables.py             pandas DataFrame -> LaTeX table files
+  demo/
+    live_camera.py              Phase 5 live webcam demo (after Stage 3)
   models/                       saved classifiers and CNN checkpoint (gitignored)
   reports/
     preamble.tex
@@ -211,11 +218,28 @@ Agent tasks:
 - `reports/final/report.tex` already `\input`s the three stage bodies; verify it compiles and page-breaks sensibly.
 - `planning/DEFENSE_PREP.md`: a list of likely oral questions, each pointing to the textbook section and the report section that cover it. Questions only.
 - Clean-venv reproducibility run: fresh venv, `pip install -r requirements.txt`, execute all four notebooks headlessly, rebuild all four PDFs, confirm figures and tables are regenerated byte-stably where determinism allows.
-- Final sweep of submission-facing files for leftover markers or references to `planning/`.
+- Final sweep of submission-facing files for leftover markers (`TODO`, `FIXME`, "write here"). References to `planning/` are allowed (D-15).
 
 Student tasks: write the final narrative section (what you learned at each stage and how each answer led to the next question) and the final AI-use note; rehearse with `DEFENSE_PREP.md`.
 
 Exit: four PDFs built from a clean environment; `TODO.md` fully ticked.
+
+### Phase 5 - Extension: live camera demo (D-13)
+
+Entry: Phase 3 exit (`models/stage3_cnn.pt` exists); the Stage 3 bonus (own-hand photos) has been run, so the size of the gap between Kaggle images and our own images is known; the mentors have answered the open questions below.
+
+Open questions for the mentors (ask in a weekly update):
+1. May we use a hand detector (for example MediaPipe Hands) only to find and crop the hand, or should we stick to a fixed on-screen square?
+2. May we fine-tune the Stage 3 CNN on our own photos for the demo only, given that the graded stages forbid training on anything but the Kaggle training split?
+
+Agent tasks:
+- `demo/live_camera.py`: open the webcam with OpenCV; draw a fixed square region; crop it, convert to grayscale, resize to 28x28 with area interpolation, scale by 1/255; run the Stage 3 CNN on CPU; overlay the top letter and its probability; smooth predictions over the last few frames; quit on a key press.
+- Share the preprocessing with `tools/prepare_own_hands.py` (Stage 3 bonus) so photos and live frames go through identical steps.
+- Add `opencv-python` to `requirements.txt` and note it in `TODO.md`.
+
+Student tasks: test the demo in different lighting and backgrounds and note which letters fail and why; record a short backup video in case the live demo fails during the presentation; optionally describe the demo and its honest limitations in the final report.
+
+Exit: the demo runs on the presentation laptop; backup video recorded.
 
 ## 9. Risk register
 
@@ -228,3 +252,4 @@ Exit: four PDFs built from a clean environment; `TODO.md` fully ticked.
 | Non-determinism in CNN training on CPU | Low | Figures change slightly on rerun | Deterministic flags, seed, `num_workers=0`; document residual variation. |
 | Student writes prose that contradicts tables after a rerun | Medium | Report inconsistency | Never rerun final cells after prose is written without telling the student; log reruns in `TODO.md`. |
 | Time: Stage 3 shift test over 3 models x 3 shifts x 4 directions | Low | Minutes | Vectorised numpy shifts; models are small. |
+| Live demo much worse than test accuracy (webcam background, lighting and hand position differ from the cropped Kaggle images) | High | Unimpressive presentation | Measure the gap first with the Stage 3 bonus photos; plain background, good light, fixed square; backup video. |

@@ -4,6 +4,10 @@ Internal checklist. Not part of the submission. Each item is marked `(agent)` or
 
 Legend for "you" items: the report section named is where your text goes in the corresponding `reports/stageN/report.tex`. Nothing in the report marks it; this list is the only reminder.
 
+## Every week (you)
+
+- [ ] Send the weekly update to Sharon in your own words: what was done, key results, predictions vs. outcomes, plan for next week, questions.
+
 ## Before every agent session (you)
 
 - [ ] Tell the agent which phase to work on.
@@ -18,15 +22,18 @@ Legend for "you" items: the report section named is where your text goes in the 
 - [x] (agent) `planning/TEXTBOOK.md` Parts A-D
 - [x] (agent) `reports/preamble.tex`, `reports/stageN/report.tex` + `body.tex`, `reports/final/report.tex`
 - [x] (agent) `.gitignore`, `README.md`
-- [ ] (you) Put your name in `\newcommand{\projectauthor}{}` in `reports/preamble.tex`.
+- [x] (you) Put your names in `\projectauthor` in `reports/preamble.tex` (Mohamed Shawki, Aia Khawaled).
 - [ ] (you) Read `planning/PRD.md` Section 4 and say which "Proposed" decisions you accept; the agent flips them to "Confirmed by student".
 - [ ] (you) Read `planning/TEXTBOOK.md` Part A once, start to finish.
-- [ ] (you) Decide whether the old `docs/Dataset/` layout and the real-time-recognition sentence in the original README should be kept anywhere (the new README drops both).
+- [x] (you) Decide about `docs/Dataset/` and real-time recognition: the three reference PNGs stay in `docs/Dataset/`; real-time recognition becomes Phase 5 (D-13).
+- [x] (agent) Record decisions D-13 (live demo as Phase 5), D-14 (no AI-written report prose, no exception), D-15 (planning files visible, honest AI disclosure) in `planning/PRD.md`, `AGENTS.md`, `.gitignore`, and TEXTBOOK Part C (C-1).
 
 ## Phase 0 - Foundation
 
-- [ ] (agent) Create `.venv` with `py -3.14`; install `requirements.txt`; verify `import torch` works. If it does not, follow `AGENTS.md` Section 9 and record the outcome here and in TEXTBOOK Part C.
-- [ ] (agent) Move CSVs and zip to `data/raw/`; remove duplicate CSVs under `docs/Dataset/sign_mnist_*/`; keep PNGs.
+- [x] (agent) Create `.venv` with `py -3.14`; verify `import torch` works. Done 2026-11-04: Python 3.14.10, torch 2.15.0+cpu, numpy 2.5.4, pandas 3.1.1, scikit-learn 1.9.1 installed by hand.
+- [x] (agent) Write `requirements.txt` from the installed versions (pinned) and `setup.bat` for one-step setup on each computer; tested on Aia's computer.
+- [ ] (you) Mohamed: run `setup.bat` on both computers and download the data into `data/raw/` on each.
+- [x] (you) Put `sign_mnist_train.csv` (27,455 x 785) and `sign_mnist_test.csv` (7,172 x 785) in `data/raw/`; verified 24 letters, no J/Z, pixels 0-255, no missing values. The extracted Kaggle download is also kept in `data/raw/archive/` (ignored by git).
 - [ ] (agent) `src/signlang/__init__.py`, `seed.py`, `data.py`, `timing.py`, `metrics.py`, `plotting.py`, `perturb.py`, `split.py`.
 - [ ] (agent) `tools/build_tables.py`.
 - [ ] (agent) `notebooks/stage0_data_and_split.ipynb`: class histograms, example grid (5 per letter), duplicate-distance histogram, threshold choice, group statistics, split construction, save `data/splits/split_v1.npz` and `split_v1.json`.
@@ -95,14 +102,21 @@ Legend for "you" items: the report section named is where your text goes in the 
 - [ ] (agent) Verify `reports/final/report.tex` compiles with the three stage bodies.
 - [ ] (agent) `planning/DEFENSE_PREP.md` with likely oral questions mapped to textbook and report sections. Questions only.
 - [ ] (agent) Clean-venv reproducibility run: fresh venv, install, execute all notebooks headlessly, rebuild all PDFs.
-- [ ] (agent) Sweep submission-facing files for markers or references to `planning/`.
+- [ ] (agent) Sweep submission-facing files for leftover markers (see deviation C-1).
 - [ ] (you) Write the final narrative section in `reports/final/report.tex`: what you learned at each stage and how each answer led to the next question.
 - [ ] (you) Write the final AI-use note.
-- [ ] (you) Decide whether to uncomment the `planning/` and `AGENTS.md` lines in `.gitignore` before sharing the repository.
+- [ ] (you) In the final AI-use note, mention that AI helped build the plan in `planning/` (D-15).
 - [ ] (you) Rehearse with `planning/DEFENSE_PREP.md`.
+
+## Phase 5 - Extension: live camera demo (D-13)
+
+- [ ] (you) Ask Sharon in a weekly update: may we use a hand detector only for cropping? May we fine-tune the CNN on our own photos for the demo only? Record the answers in `planning/PRD.md` Phase 5.
+- [ ] (agent) gate: Phase 3 done and Stage 3 bonus run. `demo/live_camera.py` with the preprocessing shared with `tools/prepare_own_hands.py`; add `opencv-python` to `requirements.txt` and log it below.
+- [ ] (you) Test in different lighting and backgrounds; note which letters fail and why.
+- [ ] (you) Record a short backup video of the demo working.
 
 ## Reruns and changes log
 
 Record here any time final cells were rerun after prose was written, any change to `requirements.txt`, and any change of the split. Point to the TEXTBOOK Part C entry.
 
-- (none yet)
+- 2026-11-04: `requirements.txt` created with pinned versions (numpy 2.5.4, pandas 3.1.1, scipy 1.18.1, scikit-learn 1.9.1, matplotlib 3.11.2, seaborn 0.13.2, joblib 1.6.0, torch 2.15.0, jupyter 1.1.1, nbconvert 7.17.2, ipykernel 7.4.0).
