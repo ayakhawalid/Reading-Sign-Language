@@ -34,15 +34,16 @@ Legend for "you" items: the report section named is where your text goes in the 
 - [x] (agent) Write `requirements.txt` from the installed versions (pinned) and `setup.bat` for one-step setup on each computer; tested on Aia's computer.
 - [ ] (you) Mohamed: run `setup.bat` on both computers and download the data into `data/raw/` on each.
 - [x] (you) Put `sign_mnist_train.csv` (27,455 x 785) and `sign_mnist_test.csv` (7,172 x 785) in `data/raw/`; verified 24 letters, no J/Z, pixels 0-255, no missing values. The extracted Kaggle download is also kept in `data/raw/archive/` (ignored by git).
-- [ ] (agent) `src/signlang/__init__.py`, `seed.py`, `data.py`, `timing.py`, `metrics.py`, `plotting.py`, `perturb.py`, `split.py`.
-- [ ] (agent) `tools/build_tables.py`.
-- [ ] (agent) `notebooks/stage0_data_and_split.ipynb`: class histograms, example grid (5 per letter), duplicate-distance histogram, threshold choice, group statistics, split construction, save `data/splits/split_v1.npz` and `split_v1.json`.
-- [ ] (agent) Save `reports/figures/stage1/examples_grid.pdf`, `class_hist.pdf`, `dup_distance_hist.pdf`.
-- [ ] (agent) If duplicate groups are not recoverable, apply the D-4 fallback and write deviation C-1.
-- [ ] (agent) Run the notebook headlessly once; confirm it completes.
+- [x] (agent) `src/signlang/__init__.py`, `seed.py`, `data.py`, `timing.py`, `metrics.py`, `plotting.py`, `perturb.py`, `split.py`. Done 2026-11-07.
+- [x] (agent) `tools/build_tables.py`.
+- [x] (agent) `notebooks/stage0_data_and_split.ipynb`: class histograms, example grid (5 per letter), duplicate-distance histogram, threshold choice, group statistics, split construction, save `data/splits/split_v1.npz` and `split_v1.json`. Done 2026-11-07: 1,281 groups, threshold 0.0178, split seed 43 (seed 42 left a letter under 100 val images), 22,003 train / 5,452 val. Method changed, see TEXTBOOK C-2.
+- [x] (agent) Save `reports/figures/stage1/examples_grid.pdf`, `class_hist.pdf`, `dup_distance_hist.pdf`, `dup_group_example.pdf`; extra `dup_threshold_sweep.pdf` (C-2).
+- [x] (agent) If duplicate groups are not recoverable, apply the D-4 fallback and write deviation C-1. Not needed: groups were recovered with a changed method, recorded as deviation C-2 (C-1 was already taken).
+- [x] (agent) Run the notebook headlessly once; confirm it completes. Done 2026-11-07 (about 1 minute on CPU).
 - [ ] (you) Read ISLP 4.3 (logistic regression, multinomial) and 5.1 (cross-validation).
 - [ ] (you) Write the three Stage 1 self-check answers in the "Self-check" section of `reports/stage1/report.tex`.
 - [ ] (you) Look at `reports/figures/stage1/examples_grid.pdf` and write in the "Data exploration" section which letters you expect to be confused and why. Do this before Phase 1 runs.
+- [ ] (you) Decide whether to show `reports/figures/stage1/dup_threshold_sweep.pdf` in the Stage 1 Data exploration section (agent wires it in if you want it).
 - [ ] (you) Write your predictions for Stage 1 questions 1, 2, 3 in the "Prediction vs. result" section of `reports/stage1/report.tex` (what accuracy range you expect, what the weight images will look like, which pairs will be confused).
 
 ## Phase 1 - Stage 1, raw pixels

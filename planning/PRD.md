@@ -46,7 +46,7 @@ The project is about features: the classifier (softmax / multinomial logistic re
 | D-1 | Code as Jupyter notebooks, one per stage, over a shared `src/signlang/` package | Confirmed by student | PDF asks for one notebook or script per stage; notebooks are what graders open. Shared package keeps split, metrics and plots identical across stages. |
 | D-2 | Reports in LaTeX, one `report.tex` per stage plus a combined final report, sharing `reports/preamble.tex` | Confirmed by student | Clean PDFs, tables generated as `.tex` and `\input`, figures as PDF. |
 | D-3 | Stage 3 in plain PyTorch (no Lightning, no ISLP helper, no Keras) | Confirmed by student | Training loop is explicit and defensible orally; smallest install risk on Python 3.14; penultimate-layer features are one line. |
-| D-4 | Validation split is group-aware: near-duplicate groups are recovered from the images and split with `GroupShuffleSplit` 80/20, stratification checked after the fact. A stratified random split is kept only as a Stage 1 diagnostic. | Proposed; verified in Phase 0 | Training set is ~1,700 photos expanded into 27,455 altered copies; a random split leaks copies and inflates validation accuracy. Details in Section 7. |
+| D-4 | Validation split is group-aware: near-duplicate groups are recovered from the images and split with `GroupShuffleSplit` 80/20, stratification checked after the fact. A stratified random split is kept only as a Stage 1 diagnostic. | Proposed; verified in Phase 0 (2026-11-07, method changed, see TEXTBOOK C-2) | Training set is ~1,700 photos expanded into 27,455 altered copies; a random split leaks copies and inflates validation accuracy. Details in Section 7. |
 | D-5 | Pixel scaling is `x / 255.0` only. No per-pixel standardisation. | Proposed | Keeps Stage 1 weight images interpretable in pixel space and matches the PDF's loading snippet. |
 | D-6 | Shift test: integer pixel shifts of 1, 2, 3 in each of the four directions, implemented as pad-with-edge-replication then crop back to 28x28. Report accuracy per direction and averaged over directions. | Proposed | Edge replication avoids introducing a black bar that would itself be a new feature; averaging over directions reduces direction-specific noise while per-direction numbers are kept for honesty. |
 | D-7 | Noise test: additive Gaussian noise with sigma in {0.1, 0.2, 0.3} on [0,1]-scaled test images, clipped back to [0,1], fixed seed. | Proposed | Three levels show the trend rather than a single point; clipping keeps images valid. |
@@ -114,6 +114,8 @@ Reading-Sign-Language/
 - Robustness: accuracy under perturbation minus clean accuracy (percentage points), for noise (Stage 2) and shifts (Stage 3).
 
 ## 7. Split strategy (D-4) in detail
+
+See deviation C-2 in `planning/TEXTBOOK.md` Part C: steps 1-4 below were replaced (correlation distance, 30 neighbours, stability-based threshold); result 1,281 groups of typically 21 images.
 
 Problem: the training CSV has no photo identifier, yet the ~27k images are altered copies of ~1,700 originals. Copies of one photo on both sides of a random split make validation accuracy optimistic (Stage 1 self-check 3).
 

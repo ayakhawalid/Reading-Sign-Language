@@ -271,6 +271,8 @@ Conventions used in Part B:
 
 ### B.0.3 `src/signlang/` modules
 
+See deviation C-2 (`split.duplicate_groups` uses a different distance, neighbour count and threshold rule).
+
 - `seed.py`: `set_seed(seed=42)` sets `random`, `numpy`, and `torch` (if importable) seeds and `PYTHONHASHSEED`.
 - `data.py`:
   - `LETTERS = ["A","B","C","D","E","F","G","H","I","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y"]`.
@@ -293,6 +295,8 @@ Conventions used in Part B:
 `df_to_tex(df, path, float_fmt="%.3f", column_format=None)` writes a `tabular` using `DataFrame.to_latex(index=False, escape=True)`. Column headers are given in the DataFrame so the agent controls wording. Nothing else.
 
 ### B.0.5 `notebooks/stage0_data_and_split.ipynb`
+
+See deviation C-2 (cells 4-6: duplicate method, extra threshold-sweep figure, leakage check; split seed 43).
 
 Cells, in order:
 
@@ -478,6 +482,23 @@ Future agents: read this part before Part B. Entries here override Part B.
 - Effect on results: none.
 - Decided by: student (both team members)
 - Follow-up: the `.gitignore` lines for hiding `planning/` and `AGENTS.md` were removed; the related TODO item was replaced.
+
+### C-2: Duplicate groups found with correlation distance, 30 neighbours and a stability-based threshold
+- Date: 2026-11-07
+- Phase: 0
+- Part B section affected: B.0.3 (`split.duplicate_groups`), B.0.5 cells 4-6; PRD Section 7 steps 1-4
+- Planned: PCA to 50 dimensions on `x/255` pixels; per-label 10-nearest-neighbour graph with cosine distance; histogram of 1st-neighbour distances; threshold at the valley between its two modes; pass if bimodal and 800-4,000 groups, otherwise fall back to a stratified random split.
+- Done instead:
+  1. Distance = 1 - Pearson correlation between two images (cosine distance after standardising each image to mean 0, std 1), on all 784 pixels, no PCA.
+  2. 30 same-label neighbours per image instead of 10.
+  3. Histogram over all 30-neighbour distances on a log axis (`dup_distance_hist.pdf`), instead of 1st-neighbour distances on a linear axis.
+  4. Threshold chosen where the number of groups is most stable: on a log grid of 21 thresholds from 0.001 to 0.1, the step with the smallest relative change in group count; threshold = geometric midpoint of that step. Extra figure `reports/figures/stage1/dup_threshold_sweep.pdf` (group count vs threshold).
+  5. `duplicate_groups` returns a dict (group ids, all edge distances, threshold, grid, group counts) instead of a 3-tuple.
+  6. Extra diagnostic in the notebook and in `split_v1.json`: for each validation image, the distance to the closest same-letter training image, under both splits.
+- Why: the planned method was tried first and failed its own pass criterion. The 1st-neighbour histogram was unimodal on a linear axis; at its log-scale valley there were ~23,000 groups, and thresholds large enough to give ~1,700 groups chained images into blobs of up to 100. Two reasons, both checked by looking at image pairs: (a) Kaggle's augmentation changes brightness and contrast, and cosine distance on dataset-centred PCA scores is not invariant to that, while correlation is; (b) each photo has ~21 copies, so an image's 1st neighbour (and its first 10) is almost always another copy, and the "different photo" distances never appear in a 1st-neighbour or 10-neighbour histogram. With 30 neighbours both modes appear. The group count is flat (1,394 -> 1,198) for every threshold between 0.008 and 0.04, which is the sign of real structure, so the threshold is taken from that plateau rather than from a histogram valley (the histogram has three modes: exact copies ~1e-4, filtered/rotated copies ~3e-3, different photos ~0.2).
+- Effect on results: the split is group-aware as D-4 intended, so no fallback was needed. Threshold 0.0178; 1,281 groups; median group size 21 (825 groups have exactly 21 images; 8 singletons; largest group 84 = 4 x 21). `GroupShuffleSplit` with seed 42 left one letter with fewer than 100 validation images, so seed 43 was used as B.0.3 prescribes (recorded in `split_v1.json`); 22,003 train / 5,452 val. Validation share per letter ranges from 0.10 (R) to 0.32 (P), so the group split is less balanced per letter than the random split. Leakage check: 99.9% of random-split validation images have a copy of the same photo in the training part; 0% for the group split. The PRD's "~1,700 photos x ~16 copies" estimate is superseded by ~1,280 photos x ~21 copies.
+- Decided by: agent (the student may ask for a different threshold rule; any change means rebuilding the split before Phase 1)
+- Follow-up: TODO item "If duplicate groups are not recoverable..." closed as not needed. Optional: show `dup_threshold_sweep.pdf` in the Stage 1 report next to `dup_distance_hist.pdf` if the student wants it.
 
 ---
 
