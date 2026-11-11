@@ -82,7 +82,7 @@ If PyTorch has no wheel for the installed Python version, install the newest Pyt
 
 Verified on 2026-11-04: Python 3.14.10 with `torch` 2.15.0+cpu installs and imports. In Command Prompt (cmd) activate the venv with `.venv\Scripts\activate`.
 
-`setup.bat` does the whole setup on a new computer (Python 3.14, `.venv`, `requirements.txt`, import check, data check); the team uses three computers. Whenever you add a package, pin it in `requirements.txt` and tell the student to rerun `setup.bat` on every computer.
+`setup.bat` does the whole setup on a new computer (Python 3.14, `.venv`, `requirements.txt`, import check, data check, MiKTeX with package auto-install, Strawberry Perl for `latexmk`, the LaTeX Workshop extension); the team uses three computers. Whenever you add a package, pin it in `requirements.txt` and tell the student to rerun `setup.bat` on every computer.
 
 Run a notebook headlessly:
 

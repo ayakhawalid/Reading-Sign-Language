@@ -68,9 +68,37 @@ if defined MISSING (
     echo Data found in data\raw\
 )
 
+rem ---- 5. LaTeX for the reports: MiKTeX, Perl for latexmk, Cursor extension
+echo.
+set "MTX=%LOCALAPPDATA%\Programs\MiKTeX\miktex\bin\x64"
+if not exist "%MTX%\pdflatex.exe" if exist "%ProgramFiles%\MiKTeX\miktex\bin\x64\pdflatex.exe" set "MTX=%ProgramFiles%\MiKTeX\miktex\bin\x64"
+where pdflatex >nul 2>&1
+if not errorlevel 1 goto :have_tex
+if exist "%MTX%\pdflatex.exe" goto :have_tex
+echo Installing MiKTeX with winget...
+winget install --id MiKTeX.MiKTeX --scope user --silent --accept-package-agreements --accept-source-agreements
+:have_tex
+if exist "%MTX%\initexmf.exe" "%MTX%\initexmf.exe" --set-config-value=[MPM]AutoInstall=1 >nul 2>&1
+if exist "%MTX%\pdflatex.exe" (echo MiKTeX found.) else (where pdflatex >nul 2>&1 || echo WARNING: MiKTeX is not installed. Install it from https://miktex.org/download)
+
+where perl >nul 2>&1
+if not errorlevel 1 goto :have_perl
+if exist "C:\Strawberry\perl\bin\perl.exe" goto :have_perl
+echo Installing Strawberry Perl with winget - needed by latexmk. Click Yes if Windows asks for permission...
+winget install --id StrawberryPerl.StrawberryPerl --silent --accept-package-agreements --accept-source-agreements
+:have_perl
+
+where cursor >nul 2>&1
+if errorlevel 1 (
+    echo Cursor command not found. In Cursor, install the extension "LaTeX Workshop" by James Yu by hand.
+) else (
+    call cursor --install-extension James-Yu.latex-workshop
+)
+
 echo.
 echo Setup finished. To use the environment in a terminal, run:
 echo   .venv\Scripts\activate
+echo If LaTeX was just installed, restart Cursor so it can find pdflatex and latexmk.
 echo.
 pause
 exit /b 0

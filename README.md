@@ -14,7 +14,7 @@ Sign Language MNIST from Kaggle: <https://www.kaggle.com/datasets/datamunge/sign
 
 ## Setup (Windows)
 
-Double-click `setup.bat` (or run it from a terminal). It installs Python 3.14 with winget if it is missing, creates `.venv`, installs the pinned packages from `requirements.txt`, checks that they import, and checks that the data files are in `data/raw/`. It is safe to run again after `requirements.txt` changes.
+Double-click `setup.bat` (or run it from a terminal). It installs Python 3.14 with winget if it is missing, creates `.venv`, installs the pinned packages from `requirements.txt`, checks that they import, checks that the data files are in `data/raw/`, and installs what the reports need (MiKTeX, Strawberry Perl for `latexmk`, and the LaTeX Workshop extension for Cursor). Restart Cursor after the first run so it finds LaTeX. It is safe to run again after `requirements.txt` changes.
 
 Manual setup in PowerShell:
 
@@ -40,7 +40,7 @@ All random seeds are fixed (42). The validation split used by every stage is bui
 
 ## Reports
 
-LaTeX sources are in `reports/stage1/`, `reports/stage2/`, `reports/stage3/` and `reports/final/`. Build any of them with `latexmk -pdf report.tex` from inside its directory. The final report combines the three stage reports.
+LaTeX sources are in `reports/stage1/`, `reports/stage2/`, `reports/stage3/` and `reports/final/`. Build any of them with `latexmk -pdf report.tex` from inside its directory, or open `report.tex` in Cursor and save it: LaTeX Workshop builds it and shows the PDF in a side panel. A stage report builds only after that stage's notebook has created its figures and tables. The final report combines the three stage reports.
 
 ## Layout
 

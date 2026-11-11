@@ -121,3 +121,4 @@ Legend for "you" items: the report section named is where your text goes in the 
 Record here any time final cells were rerun after prose was written, any change to `requirements.txt`, and any change of the split. Point to the TEXTBOOK Part C entry.
 
 - 2026-11-04: `requirements.txt` created with pinned versions (numpy 2.5.4, pandas 3.1.1, scipy 1.18.1, scikit-learn 1.9.1, matplotlib 3.11.2, seaborn 0.13.2, joblib 1.6.0, torch 2.15.0, jupyter 1.1.1, nbconvert 7.17.2, ipykernel 7.4.0).
+- 2026-11-11: `setup.bat` now also installs MiKTeX 25.12 (package auto-install on), Strawberry Perl and the LaTeX Workshop extension; `latexmk -pdf` tested with `reports/preamble.tex` on Aia's computer. Mohamed: rerun `setup.bat` on both computers.
