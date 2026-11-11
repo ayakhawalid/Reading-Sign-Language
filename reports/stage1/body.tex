@@ -2,9 +2,15 @@
 
 \subsection{Weight vector of one class as a 28$\times$28 image}
 
+A pixel receiving a large positive weight means that for the class, that pixel is often bright, and less bright for the other classes. Therefore multiplying the weight by the scaled pixel value raises the score, which raises the probability for that class to be the right class for that input in relation to the other classes. A large negative weight means that, for this class, the pixel is usually dark, so if it’s bright in an input, the score drops. When the weight vector is reshaped to 28$\times$28 and shown as an image, the positive weights roughly trace where this letter’s hand usually appears, and the negative weights mark the areas that should stay empty for this letter.
+
 \subsection{Why a 2-pixel shift is a very different input}
 
+Because the weight map is not shifted along with the image, each weight stays fixed on a specific pixel, and it doesn't care about its relation to the neighboring pixels. 2 pixels is a lot in relation to the 28 pixel per dimension, which could lead to moving most of a finger off of the pixels it used to cover. After the shift, the bright parts of the hand fall on pixels with different weights, causing parts of the hand that used to be on large positive weights to land on small or negative weights, which changes the weighted sum and the scores of every letter, so the input looks very different to the classifier.
+
 \subsection{Random validation split versus the official test set}
+
+Because the validation set consists of altered, near-copy photos from those 1700 photos, whose other copies the model has already observed and trained off of, and that inflates the accuracy and gives an overly optimistic result, whereas an official test set would contain photos that are truly unseen to the model.
 
 \section{Data exploration}
 
@@ -35,6 +41,15 @@
   \caption{Evidence for near-duplicate images in the training set and the resulting group-aware validation split.}
   \label{fig:s1-duplicates}
 \end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.6\textwidth]{stage1/dup_threshold_sweep.pdf}
+  \caption{Number of near-duplicate groups as a function of the distance threshold. The dashed line marks the chosen threshold.}
+  \label{fig:s1-dup-threshold}
+\end{figure}
+
+We expect these pairs to be confused: G and T, E and S, D and R. These letter pairs have similar hand shapes and gestures, so the classifier will probably confuse them.
 
 \section{Results}
 
@@ -95,8 +110,14 @@
 
 \subsection{Question 1: how well does it do?}
 
+\textbf{Prediction.} Validation accuracy will be close to the test accuracy, both between 60\% and 75\%, because we made sure the validation set is not made using a random split. We predict that choosing a medium value for C ($C=1$) would probably give the best result overall, since it gives the best trade-off between bias and variance: it makes sure we are not overfitting, as with a high value of C, and that the weights are not close to zero, as with a small C.
+
 \subsection{Question 2: what does it look at?}
 
+\textbf{Prediction.} If validation picks a high value of C, we expect the weight images to look like noisy speckles, because a weak penalty lets neighboring pixels get very different weights. With a smaller (medium) C, we expect a blurry outline, because the stronger penalty spreads the weight across neighboring pixels that carry the same information, giving smoother images.
+
 \subsection{Question 3: which letters are confused?}
+
+\textbf{Prediction.} We predict that the pairs we suggested in the Data exploration section will be confused, because these letters will get similar weights. A linear classifier on raw pixels won't classify them correctly, because its only features are the raw pixels and the pixels of these letters are similar. Other classifiers, like a CNN, can learn features that help them find more distinct features for the classes. PCA finds the greatest variance across all images, and then the softmax classifier will learn from the new features, which can help because we dropped all the components with the least variance.
 
 \section{AI-use note}

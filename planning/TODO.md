@@ -23,7 +23,7 @@ Legend for "you" items: the report section named is where your text goes in the 
 - [x] (agent) `reports/preamble.tex`, `reports/stageN/report.tex` + `body.tex`, `reports/final/report.tex`
 - [x] (agent) `.gitignore`, `README.md`
 - [x] (you) Put your names in `\projectauthor` in `reports/preamble.tex` (Mohamed Shawki, Aia Khawaled).
-- [ ] (you) Read `planning/PRD.md` Section 4 and say which "Proposed" decisions you accept; the agent flips them to "Confirmed by student".
+- [ ] (you) Read `planning/PRD.md` Section 4 and say which "Proposed" decisions you accept; the agent flips them to "Confirmed by student". D-4, D-5, D-9 confirmed 2026-11-11; D-6, D-7, D-10, D-11, D-12 still open (needed before Stages 2 and 3).
 - [ ] (you) Read `planning/TEXTBOOK.md` Part A once, start to finish.
 - [x] (you) Decide about `docs/Dataset/` and real-time recognition: the three reference PNGs stay in `docs/Dataset/`; real-time recognition becomes Phase 5 (D-13).
 - [x] (agent) Record decisions D-13 (live demo as Phase 5), D-14 (no AI-written report prose, no exception), D-15 (planning files visible, honest AI disclosure) in `planning/PRD.md`, `AGENTS.md`, `.gitignore`, and TEXTBOOK Part C (C-1).
@@ -43,7 +43,7 @@ Legend for "you" items: the report section named is where your text goes in the 
 - [ ] (you) Read ISLP 4.3 (logistic regression, multinomial) and 5.1 (cross-validation).
 - [ ] (you) Write the three Stage 1 self-check answers in the "Self-check" section of `reports/stage1/report.tex`.
 - [ ] (you) Look at `reports/figures/stage1/examples_grid.pdf` and write in the "Data exploration" section which letters you expect to be confused and why. Do this before Phase 1 runs.
-- [ ] (you) Decide whether to show `reports/figures/stage1/dup_threshold_sweep.pdf` in the Stage 1 Data exploration section (agent wires it in if you want it).
+- [x] (you) Decide whether to show `reports/figures/stage1/dup_threshold_sweep.pdf` in the Stage 1 Data exploration section (agent wires it in if you want it). Yes (2026-11-11); added to `body.tex`.
 - [ ] (you) Write your predictions for Stage 1 questions 1, 2, 3 in the "Prediction vs. result" section of `reports/stage1/report.tex` (what accuracy range you expect, what the weight images will look like, which pairs will be confused).
 
 ## Phase 1 - Stage 1, raw pixels
