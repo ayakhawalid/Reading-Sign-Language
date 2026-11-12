@@ -48,12 +48,12 @@ Legend for "you" items: the report section named is where your text goes in the 
 
 ## Phase 1 - Stage 1, raw pixels
 
-- [ ] (agent) gate: Stage 1 predictions written. `notebooks/stage1_raw_pixels.ipynb` C sweep on the group split and on the random split; `reports/tables/s1_C_sweep.tex`; `reports/figures/stage1/c_sweep.pdf`.
-- [ ] (agent) Choose C by group-validation accuracy; refit; single test evaluation; `reports/tables/s1_test.tex`; save `models/stage1_softmax.joblib`.
-- [ ] (agent) Weight images for 5 letters; `reports/figures/stage1/weights.pdf`. Default letters A, B, C, L, Y unless you name others.
-- [ ] (agent) Confusion matrix and top-5 confused pairs with example images; `reports/figures/stage1/confusion.pdf`, `confused_pairs.pdf`; `reports/tables/s1_confused_pairs.tex`.
-- [ ] (agent) Headless run; report compiles with empty prose sections.
-- [ ] (you) Name the 5 letters for the weight images, or accept the default.
+- [x] (agent) gate: Stage 1 predictions written. `notebooks/stage1_raw_pixels.ipynb` C sweep on the group split and on the random split; `reports/tables/s1_C_sweep.tex`; `reports/figures/stage1/c_sweep.pdf`. Predictions committed 2026-11-11 (49ad965); notebook run 2026-11-12; all fits converged. Shared fit and sweep code in `src/signlang/softmax.py`.
+- [x] (agent) Choose C by group-validation accuracy; refit; single test evaluation; `reports/tables/s1_test.tex`; save `models/stage1_softmax.joblib`. Chosen C = 0.1.
+- [x] (agent) Weight images for 5 letters; `reports/figures/stage1/weights.pdf`. Default letters A, B, C, L, Y unless you name others.
+- [x] (agent) Confusion matrix and top-5 confused pairs with example images; `reports/figures/stage1/confusion.pdf`, `confused_pairs.pdf`; `reports/tables/s1_confused_pairs.tex`.
+- [x] (agent) Headless run; report compiles with empty prose sections.
+- [x] (you) Name the 5 letters for the weight images, or accept the default. Default A, B, C, L, Y used.
 - [ ] (you) "Results": discuss validation and test accuracy, the choice of C, and explain the gap.
 - [ ] (you) "Weight images": interpret the 5 images.
 - [ ] (you) "Confusions": explain why the top pairs are hard for a linear classifier on raw pixels.
