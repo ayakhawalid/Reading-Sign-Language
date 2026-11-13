@@ -53,6 +53,19 @@ We expect these pairs to be confused: G and T, E and S, D and R. These letter pa
 
 \section{Results}
 
+Here $n$ is the number of images, $\hat{y}_i$ the predicted letter and $y_i$ the true letter of image $i$. $TP_c$ is the number of images of letter $c$ predicted as $c$, $FP_c$ the number of images of other letters predicted as $c$, and $FN_c$ the number of images of $c$ predicted as another letter.
+\[
+\text{Accuracy} = \frac{1}{n}\sum_{i=1}^{n} \mathbb{1}(\hat{y}_i = y_i)
+\]
+\[
+\text{Precision}_c = \frac{TP_c}{TP_c + FP_c}, \qquad
+\text{Recall}_c = \frac{TP_c}{TP_c + FN_c}
+\]
+\[
+F_{1,c} = \frac{2\,\text{Precision}_c\,\text{Recall}_c}{\text{Precision}_c + \text{Recall}_c}, \qquad
+\text{Macro-}F_1 = \frac{1}{24}\sum_{c=1}^{24} F_{1,c}
+\]
+
 \begin{table}[H]
   \centering
   \caption{Validation accuracy for several values of $C$ on the group-aware split and on a plain random split, with training time.}
@@ -74,6 +87,12 @@ We expect these pairs to be confused: G and T, E and S, D and R. These letter pa
   \input{../tables/s1_test.tex}
 \end{table}
 
+$C=0.1$ was chosen because it gave the highest validation accuracy between $C=0.001,\dots,100$ for the group split (0.658), which is the rule from our plan. The F1 score happens to agree, since it is also highest at $C=0.1$ (0.662). The validation accuracy for the group split rose between $C=0.001$ to $C=0.1$, then stayed almost flat from $C=0.1$ to $C=10$ (0.658, 0.656, 0.656), and only dropped at $C=100$ (0.623), but stayed higher than the values from $C=0.001$ and $C=0.01$ (0.426, 0.586).
+
+In random split accuracy, we can see that it is much higher than group split accuracy, scoring approximately 0.9996 for $C=10$, which is the maximum for all $C$. Because in random split, the validation group contains copies of the same images trained on the softmax classifier, because the training images were made from about 1700 photos with small changes. We checked in Stage 0 and discovered that they come from 1,281 photos. And if you randomly split them and then try to validate the classifier, it will classify them correctly, because it trained on the images before with a slight change that won't affect its classification.
+
+It turned out that there isn't a gap between test and validation accuracy in the group split (0.658 validation, 0.660 test). The validation group split gives a good estimate of the test accuracy. The validation set helped us choose $C=0.1$, and the test set was used only once for the chosen $C$.
+
 \section{Weight images}
 
 \begin{figure}[H]
@@ -82,6 +101,8 @@ We expect these pairs to be confused: G and T, E and S, D and R. These letter pa
   \caption{Top row: weight vectors of five letters reshaped to $28\times28$ (red positive, blue negative). Bottom row: mean training image of the same letters.}
   \label{fig:s1-weights}
 \end{figure}
+
+The weight images for A, B, C, L, Y show heat maps with blue color for negative weights, red color for positive weights, and white for almost zero. This clearly matches our interpretation for self-check question one. For regions of a letter image that are darker than in the other letters, the weights are negative (blue in the weight image), and for regions that are brighter than in the other letters, the weights are positive (red in the weight image). We can see that in each letter's average image, each region that is brighter or darker than in the other letters is connected to the red or blue region in the letter's weight image. The weight images aren't smooth, they are blurred and speckled. We can detect the blue and red regions and connect them to the dark and bright spots of the letter's average image for letters A, B, and especially C, which shows a blue region on the dark fingers and red on the bright gap the hand makes in the middle.
 
 \section{Confusions}
 
@@ -106,18 +127,32 @@ We expect these pairs to be confused: G and T, E and S, D and R. These letter pa
   \label{fig:s1-confused-pairs}
 \end{figure}
 
+The most confused pairs are M--S, R--U, V--W, K--R and U--K.
+
+A linear classifier on raw pixels can't separate them because the difference between the two confused letters are small details, like a one-finger difference or a small change in gesture, and sometimes the hands in both letters sit higher, lower, or tilted, and the distinguishing detail lands on different pixels each time. Because of that, a fixed weight per pixel can't follow it, especially since those changes are also found in the training images of the same letter. Then what happens is: suppose test image $\alpha$, which is an S letter image, and the hand's position in $\alpha$ is shifted. Then $\alpha$'s bright pixels move onto pixels where M has positive (red) weights and S doesn't, so M's red region will sit on $\alpha$'s bright region. Then $z_M > z_S$, so $P_M$ for $\alpha$ is larger than $P_S$, and $\alpha$ is labelled M.
+
+We should note that K--R is one-sided, so only K is misclassified as R, because R has 1171 images in the group split training part, while K has only 928. So R weights might be larger, and indeed R has the largest weight vector of all 24 letters (length 8.14, while most are 6--7.7). R's intercept is not larger ($-0.16$, against K's $0.00$), so the pull comes from the weights, not the bias. So it might attract similar letters like K: R is predicted 426 times on the test set, but only 144 test images are actually R. Also, there are only 144 R test images against 331 K, so R has fewer chances to be mistaken for K. In the confusion matrix, we can see that the highest mistake for R is U, not K (60 of the 144 R images became U, only 41 were correct, and 0 became K). Those confusions happen because the test images come from different photos than the training images.
+
 \section{Prediction vs.\ result}
 
 \subsection{Question 1: how well does it do?}
 
 \textbf{Prediction.} Validation accuracy will be close to the test accuracy, both between 60\% and 75\%, because we made sure the validation set is not made using a random split. We predict that choosing a medium value for C ($C=1$) would probably give the best result overall, since it gives the best trade-off between bias and variance: it makes sure we are not overfitting, as with a high value of C, and that the weights are not close to zero, as with a small C.
 
+\textbf{Result.} Accuracy is right (validation 0.658 and test 0.660, both inside the 60--75\% we predicted) and $C$ is 0.1 instead of 1, so we have close guesses. $C=1$ got 0.6555, almost the same as $C=0.1$ (0.6581), so it was a close call.
+
 \subsection{Question 2: what does it look at?}
 
 \textbf{Prediction.} If validation picks a high value of C, we expect the weight images to look like noisy speckles, because a weak penalty lets neighboring pixels get very different weights. With a smaller (medium) C, we expect a blurry outline, because the stronger penalty spreads the weight across neighboring pixels that carry the same information, giving smoother images.
+
+\textbf{Result.} Yes, they look blurred and speckled as we predicted, but note that we only proved our prediction for the middle $C$, because we showed only the weight images for $C=0.1$.
 
 \subsection{Question 3: which letters are confused?}
 
 \textbf{Prediction.} We predict that the pairs we suggested in the Data exploration section will be confused, because these letters will get similar weights. A linear classifier on raw pixels won't classify them correctly, because its only features are the raw pixels and the pixels of these letters are similar. Other classifiers, like a CNN, can learn features that help them find more distinct features for the classes. PCA finds the greatest variance across all images, and then the softmax classifier will learn from the new features, which can help because we dropped all the components with the least variance.
 
+\textbf{Result.} Partly. The actual top-5 pairs are M--S (164), R--U (115), V--W (105), K--R (97) and U--K (81). Of our predicted pairs, E and S were confused (light blue color in the confusion matrix), and G and T, so these two are partly right. D and R were almost never confused, so that one is wrong. The PCA part of our prediction belongs to Stage 2, and we will check it there.
+
 \section{AI-use note}
+
+The AI wrote the Stage 1 code: the code in \texttt{src/} (including \texttt{softmax.py}), the Python notebook (\texttt{.ipynb}), and the code that makes the figures and tables. It also wrote \texttt{setup.bat} (including the LaTeX install), set up the LaTeX report structure including the figure and table captions, gave the metric formulas, explained concepts, gave hints, and checked our drafts for errors. We wrote all the answers, predictions and analysis ourselves, including the self-check questions and the report, and we ran the notebook ourselves.
